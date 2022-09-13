@@ -34,13 +34,13 @@ app.use(express.json({ extended: true })); // if json come backend then it conve
 const directoryPath = path.join(__dirname, "data");
 
 // download file
-app.use("/api/file/:file", (req, res) => {
+app.use("/api/upload/file/:file", (req, res) => {
   const { file } = req.params;
   res.download(`${directoryPath}/${file}`);
   res.status(200);
 });
 
-app.use("/api/list", (req, res) => {
+app.use("/api/upload/list", (req, res) => {
   fs.readdir(directoryPath, function (err, files) {
     if (err) {
       res.send({ error: "Unable to scan directory" });
@@ -76,6 +76,7 @@ app.use((err, req, res, next) => {
   logger.error(`[Global error middleware] ${err.message} ${err.status} ${err.stack} ${req.method} ${req.url}`);
   res.status(500).send({
     message: err.message,
+    url: req.url,
   });
   next();
 });
