@@ -4,7 +4,7 @@ const _ = require("lodash");
 const { Types } = require("mongoose");
 const { errors } = require("./constants");
 const logger = require("./logger");
-const { isString } = require("lodash");
+const { isString, get } = require("lodash");
 const config = require("../../config");
 const moment = require("moment");
 
@@ -266,9 +266,9 @@ function toFixed(number, n = 2) {
 //     });
 // }
 
-const errorHandling = (e, functionName, res) => {
-  logger.error(`${e.message} -> ${fileName} -> ${functionName} -> ${e.stack}`);
-  errors.SERVER_ERROR(res);
+const errorHandling = (e, functionName, res, fileName) => {
+  require("./logger").error(`${e.message} -> ${fileName} -> ${functionName} -> \n\n ${e.stack}`);
+  errors.SERVER_ERROR(res, { message: e.message });
 };
 
 const hideFields = (items = {}) => ({
@@ -310,6 +310,13 @@ const isLink = (link) => {
   return false;
 };
 
+const isHasFolder = (path) => fs.existsSync(path) && fs.lstatSync(path).isDirectory();
+const isHasFile = (path) => fs.existsSync(path) && fs.lstatSync(path).isFile();
+
+const createDefaultFolder = (dirName) => !isHasFolder(dirName) && fs.mkdirSync(dirName, { recursive: true });
+
+const getExtension = (file) => get(file, "originalname", "")?.split(".")?.pop();
+
 // ********************************************************
 module.exports = {
   writeData,
@@ -334,4 +341,8 @@ module.exports = {
   deleteFormat,
   updateFormat,
   isLink,
+  createDefaultFolder,
+  getExtension,
+  isHasFolder,
+  isHasFile,
 };
