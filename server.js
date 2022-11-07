@@ -20,9 +20,6 @@ function shouldCompress(req, res) {
   return compression.filter(req, res);
 }
 
-// COMPRESS MIDDLEWARES
-app.use(compression({ filter: shouldCompress }));
-
 const createDefaultFolder = (dirName) => !fs.existsSync(dirName) && fs.mkdirSync(dirName, { recursive: true });
 
 createDefaultFolder(config.CACHE_PATH);
@@ -30,8 +27,10 @@ createDefaultFolder(config.DATA_PATH);
 createDefaultFolder(config.DELETE_ALL_FILES_PATH);
 
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json({ extended: true })); // if json come backend then it convert to obj in req.body
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(express.json({ limit: "50mb", extended: true })); // if json come backend then it convert to obj in req.body
+// COMPRESS MIDDLEWARES
+app.use(compression({ filter: shouldCompress }));
 
 app.use("/api/attachment/upload", uploadRouter);
 
