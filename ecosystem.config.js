@@ -13,7 +13,7 @@ module.exports = {
   deploy: {
     production: {
       user: "ubuntu",
-      host: "18.222.127.242",
+      host: "3.36.113.189",
       ref: "origin/main",
       // repo: "git@github.com:aslamjon/preview.git",
       repo: "https://github.com/aslamjon/uploader.git",
